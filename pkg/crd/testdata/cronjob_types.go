@@ -23,6 +23,7 @@ limitations under the License.
 package cronjob
 
 import (
+	"encoding/json"
 	"fmt"
 
 	batchv1beta1 "k8s.io/api/batch/v1beta1"
@@ -140,6 +141,15 @@ type CronJobSpec struct {
 	// A struct that can only be entirely replaced
 	// +structType=atomic
 	StructWithSeveralFields NestedObject `json:"structWithSeveralFields"`
+
+	// This tests a struct with custom marshaller
+	CustomMarshal CustomMarshal `json:"customMarshal"`
+
+	// This tests a struct with custom marshaller but no Type tag
+	AnotherCustomMarshal AnotherCustomMarshal `json:"anotherCustomMarshal"`
+
+	// This tests a list of struct with custom marshaller
+	CustomMarshalList []CustomMarshal `json:"customMarshalList"`
 }
 
 type NestedObject struct {
@@ -156,6 +166,19 @@ type AssociativeType struct {
 	Secondary int    `json:"secondary"`
 	Foo       string `json:"foo"`
 }
+
+// +kubebuilder:validation:Type=string
+type CustomMarshal struct {
+	Foo string
+}
+
+func (o CustomMarshal) MarshalJSON() ([]byte, error) { return json.Marshal(o.Foo) }
+
+type AnotherCustomMarshal struct {
+	Bar string
+}
+
+func (o AnotherCustomMarshal) MarshalJSON() ([]byte, error) { return json.Marshal(o.Bar) }
 
 // +kubebuilder:validation:MinLength=4
 // This tests that markers that are allowed on both fields and types are applied to types

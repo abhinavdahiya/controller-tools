@@ -36,6 +36,10 @@ spec:
           spec:
             description: CronJobSpec defines the desired state of CronJob
             properties:
+              anotherCustomMarshal:
+                description: This tests a struct with custom marshaller but no Type
+                  tag
+                type: Any
               associativeList:
                 description: This tests that associative lists work.
                 items:
@@ -81,6 +85,14 @@ spec:
                 - Forbid
                 - Replace
                 type: string
+              customMarshal:
+                description: This tests a struct with custom marshaller
+                type: string
+              customMarshalList:
+                description: This tests a list of struct with custom marshaller
+                items:
+                  type: string
+                type: array
               defaultedObject:
                 default:
                 - nested:
@@ -5102,9 +5114,12 @@ spec:
                 type: object
                 x-kubernetes-preserve-unknown-fields: true
             required:
+            - anotherCustomMarshal
             - associativeList
             - binaryName
             - canBeNull
+            - customMarshal
+            - customMarshalList
             - defaultedObject
             - defaultedSlice
             - defaultedString
